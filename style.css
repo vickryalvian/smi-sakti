@@ -1,0 +1,81 @@
+/* === Info Panel === */
+.info-panel {
+    position: absolute;
+    top: 80px;
+    left: 30px;
+    background: rgba(255,255,255,0.97);
+    padding: 16px 18px;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+    font-family: "Inter", system-ui, sans-serif;
+    max-width: 320px;
+    z-index: 10000;
+  }
+  .info-panel h3 {
+    font-size: 16px;
+    font-weight: 700;
+    margin: 0 0 8px 0;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 6px;
+  }
+  .info-panel p { margin: 6px 0; font-size: 13px; color:#333; }
+  .info-panel small { display:block; color:#666; margin-top:8px; font-size:12px; }
+  
+  /* === Kecamatan Label === */
+  .kecamatan-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #222;
+    pointer-events: none;
+    white-space: nowrap;
+    text-shadow:
+    -1px -1px 2px rgba(255,255,255,0.9),
+    1px -1px 2px rgba(255,255,255,0.9),
+    -1px 1px 2px rgba(255,255,255,0.9),
+    1px 1px 2px rgba(255,255,255,0.9);
+  }
+  
+  .leaflet-pane .leaflet-marker-pane { z-index: 650; }
+  
+  /* === Slider & Layout === */
+  .month-slider-container { 
+    position: relative; 
+    z-index:9999; 
+    margin-bottom:12px;
+  }
+  #monthSlider { 
+    width: 260px; 
+    vertical-align: middle;
+  }
+  .slider-label {
+    font-family:Inter,system-ui, sans-serif;
+    margin-right:8px;
+  }
+  .month-label {
+    margin-left:10px; 
+    font-family:Inter,system-ui, sans-serif; 
+    font-weight:600;
+  }
+  
+  /* Map container */
+  #map-container {
+    position: relative;
+    height: 600px;
+  }
+  #map {
+    height: 600px;
+    width: 100%;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  
+  /* Responsive */
+  @media (max-width:768px){
+    .info-panel { 
+      left: 10px; 
+      right: 10px; 
+      top: 10px; 
+      max-width: none; 
+    }
+  }
+  

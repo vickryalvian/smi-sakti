@@ -1,0 +1,31 @@
+<!-- =========================
+  HTML (UI ONLY)
+========================= -->
+<div id="monthSliderContainer" class="month-slider-container">
+    <label for="monthSlider" class="slider-label">Pilih Bulan:</label>
+    <input type="range" id="monthSlider" min="1" max="12" value="1">
+    <span id="monthLabel" class="month-label">January</span>
+  </div>
+  
+  <div id="map-container">
+    <!-- Info Panel -->
+    <div id="info-panel" class="info-panel">
+      <h3>Pilih Kecamatan</h3>
+      <div id="info-content">Arahkan kursor ke kecamatan untuk melihat detail bencana.</div>
+    </div>
+  
+    <!-- Map -->
+    <div id="map"></div>
+  </div>
+  
+  <!-- Leaflet & PapaParse (CDN) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+  
+  <!-- CSS External -->
+  <link rel="stylesheet" href="styles.css">
+  
+  <!-- JS External -->
+  <script src="main.js"></script>
+  
