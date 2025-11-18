@@ -1,0 +1,36 @@
+# =========================
+# DISABLE DIRECTORY LISTING
+# =========================
+Options -Indexes
+
+# =========================
+# PROTECT PRIVATE FOLDER
+# =========================
+<Directory "/home/vickryid/peta.kabsukabumisakti.my.id/private">
+    Order allow,deny
+    Deny from all
+</Directory>
+
+# =========================
+# PROTECT CONFIG AND DATA FILES
+# =========================
+<FilesMatch "(config|data)\.php$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# =========================
+# ALLOW ACCESS ONLY TO PUBLIC FILES
+# =========================
+<FilesMatch "\.(html|css|js|png|jpg|jpeg|gif|svg)$">
+    Order allow,deny
+    Allow from all
+</FilesMatch>
+
+# =========================
+# OPTIONAL: REDIRECT ALL 404 TO index.html
+# =========================
+# Uncomment jika ingin SPA style (Single Page App)
+# RewriteEngine On
+# RewriteCond %{REQUEST_FILENAME} !-f
+# RewriteRule ^ index.html [L]
