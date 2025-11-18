@@ -3,16 +3,7 @@
   // =========================
   // CONFIG
   // =========================
-  const SHEET_BASE_PUBLISHED =
-    "https://docs.google.com/spreadsheets/d/e/2PACX-1vTmmXuXJ-Cjk8-w6TKQgGPF6uuKqNrDlS4eti5t__24-YhH2XNRZRZ2d-qtIB2tUKPyUCtI3Sygy9cO/pub?output=csv&single=true";
-
-  const GEOJSON_RAW =
-    "https://raw.githubusercontent.com/vickryalvian/db_heatmap/main/32.02_kecamatan.geojson";
-
   const CATEGORIES = ["longsor","banjir","ak","gb","pt","kk","khl","lga","abr","tsu","ll"];
-  const CACHE_KEY = "geo_kec_cache_v1";
-  const CACHE_DAYS = 7;
-
   const MONTHS = [
     "January","February","March","April","May","June",
     "July","August","September","October","November","December"
@@ -35,56 +26,6 @@
   }
 
   // =========================
-  // HELPERS
-  // =========================
-  async function fetchTextWithCheck(url){
-    const res = await fetch(url, {cache:"no-store"});
-    if (!res.ok) throw new Error("HTTP " + res.status);
-    const text = await res.text();
-    if (/<html/i.test(text)) throw new Error("Returned HTML");
-    return text;
-  }
-
-  async function loadGeoJSON(){
-    try {
-      const cached = localStorage.getItem(CACHE_KEY);
-      if (cached){
-        const obj = JSON.parse(cached);
-        const ageDays = (Date.now() - obj.time) / (1000*60*60*24);
-        if (ageDays < CACHE_DAYS) return obj.data;
-      }
-    } catch(e){}
-
-    const res = await fetch(GEOJSON_RAW, {cache:"no-store"});
-    if (!res.ok) throw new Error("GeoJSON HTTP " + res.status);
-    const geo = await res.json();
-    try { localStorage.setItem(CACHE_KEY, JSON.stringify({time:Date.now(), data:geo})); } catch(e){}
-    return geo;
-  }
-
-  function sheetUrlsForMonth(month){
-    return {
-      urlByName: SHEET_BASE_PUBLISHED + "&sheet=" + encodeURIComponent(month),
-      fallback:  SHEET_BASE_PUBLISHED + "&gid=0"
-    };
-  }
-
-  async function loadSheetForMonth(month){
-    const urls = sheetUrlsForMonth(month);
-    try { return await fetchTextWithCheck(urls.urlByName); }
-    catch(e){ return await fetchTextWithCheck(urls.fallback); }
-  }
-
-  function parseCSV(csvText){
-    const parsed = Papa.parse(csvText.trim(), { header:true, skipEmptyLines:true });
-    return parsed.data.map(row => {
-      const out = {};
-      Object.keys(row).forEach(k => out[k.trim()] = (row[k] || "").toString().trim());
-      return out;
-    });
-  }
-
-  // =========================
   // INIT MAP
   // =========================
   function initMap(){
@@ -94,6 +35,21 @@
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
       maxZoom:18
     }).addTo(map);
+  }
+
+  // =========================
+  // FETCH DATA FROM SERVER
+  // =========================
+  async function fetchData(month){
+    try {
+      const res = await fetch(`/private/data.php?month=${encodeURIComponent(month)}`);
+      const obj = await res.json();
+      return [obj.geojson, obj.sheet];
+    } catch(err){
+      console.error("Fetch error:", err);
+      alert("Gagal memuat data. Lihat console.");
+      return [null, []];
+    }
   }
 
   // =========================
@@ -182,7 +138,7 @@
       if (v>0) html += `<p><strong>${cat.toUpperCase()}:</strong> ${v}</p>`;
     });
 
-    html += `<small>Data diperbarui otomatis dari Google Sheet</small>`;
+    html += `<small>Data diperbarui otomatis dari server</small>`;
     document.getElementById("info-content").innerHTML = html;
   }
 
@@ -214,20 +170,13 @@
   async function start(monthName){
     try { initMap(); } catch(e){ return; }
 
-    try {
-      const [geo, csvText] = await Promise.all([
-        loadGeoJSON(),
-        loadSheetForMonth(monthName)
-      ]);
+    const [geo, sheetRows] = await fetchData(monthName);
 
-      currentData = parseCSV(csvText||"");
-      renderGeoJSON(geo, currentData);
-      resetInfoPanel();
+    if(!geo || !sheetRows) return;
 
-    } catch(err){
-      console.error("Load error:", err);
-      alert("Gagal memuat data. Lihat Console.");
-    }
+    currentData = sheetRows;
+    renderGeoJSON(geo, currentData);
+    resetInfoPanel();
   }
 
   function boot(){
