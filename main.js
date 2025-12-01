@@ -126,12 +126,16 @@
     const panel = document.getElementById("info-panel");
     panel.querySelector("h3").innerText = name;
 
-    let html = `
-      <p><strong>Total Bencana:</strong> ${dataObj.total_bencana}</p>
-      <p><strong>Korban Manusia:</strong> ${dataObj.manusia}</p>
-      <p><strong>Rumah Rusak:</strong> ${dataObj.rumah}</p>
-      <hr/>
-    `;
+    html += `
+    <div class="rumah-detail-title">Detail Kerusakan Rumah:</div>
+    <div class="rumah-detail-item">Rusak Berat: ${Number(dataObj._raw.rusak_berat || 0)}</div>
+    <div class="rumah-detail-item">Rusak Sedang: ${Number(dataObj._raw.rusak_sedang || 0)}</div>
+    <div class="rumah-detail-item">Rusak Ringan: ${Number(dataObj._raw.rusak_ringan || 0)}</div>
+    <div class="rumah-detail-item">Terancam: ${Number(dataObj._raw.terancam || 0)}</div>
+    <div class="rumah-detail-item">Terendam: ${Number(dataObj._raw.terendam || 0)}</div>
+    <hr/>
+  `;
+
 
     CATEGORIES.forEach(cat=>{
       const v = Number(dataObj._raw["data_"+cat] || 0);
